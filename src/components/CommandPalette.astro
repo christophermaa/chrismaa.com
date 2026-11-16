@@ -1,0 +1,148 @@
+---
+import { getCommands } from '@/data/commands';
+import { site } from '@/data/site';
+
+const commands = await getCommands();
+const payload = {
+  commands,
+  whoami: `${site.name} — ${site.role}. ${site.tagline}`,
+  github: site.links.github,
+  linkedin: site.links.linkedin,
+};
+---
+
+<dialog class="palette glass-strong" aria-label="Command palette" data-palette>
+  <div class="bar">
+    <span class="prompt mono" data-prompt aria-hidden="true">⌕</span>
+    <input
+      type="text"
+      inputmode="search"
+      enterkeyhint="go"
+      class="input"
+      placeholder="Search or type > for terminal…"
+      autocomplete="off"
+      spellcheck="false"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-list"
+      aria-autocomplete="list"
+      data-palette-input
+    />
+    <button type="button" class="esc mono" data-palette-close aria-label="Close">
+      <span class="esc-key">esc</span><span class="esc-x" aria-hidden="true">✕</span>
+    </button>
+  </div>
+  <ul id="palette-list" class="list" role="listbox" aria-label="Commands" data-palette-list></ul>
+  <div class="term mono" data-term hidden>
+    <div class="out" data-term-out aria-live="polite"></div>
+    <div class="chips" role="group" aria-label="Quick commands">
+      {['help', 'whoami', 'ls projects', 'orbit', 'contact', 'clear'].map((c) => (
+        <button type="button" class="chip" data-term-cmd={c}>{c}</button>
+      ))}
+    </div>
+  </div>
+  <footer class="foot mono">
+    <div class="modes" role="group" aria-label="Mode">
+      <button type="button" class="mode" data-mode="search" aria-pressed="true">⌕ Search</button>
+      <button type="button" class="mode" data-mode="terminal" aria-pressed="false">❯ Terminal</button>
+    </div>
+    <span class="keys"><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>↵</kbd> run</span>
+  </footer>
+</dialog>
+
+<script type="application/json" id="palette-data" set:html={JSON.stringify(payload)} />
+
+<script>
+  import { initPalette } from '@/scripts/palette';
+  initPalette();
+</script>
+
+<style>
+  .palette {
+    position: fixed;
+    inset: 0;
+    height: fit-content;
+    width: min(100% - 1.5rem, 40rem);
+    max-height: min(70vh, 34rem);
+    margin: 12vh auto auto;
+    padding: 0;
+    border: 0;
+    color: var(--ink);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    --glass-tint-strong: oklch(0.2 0.03 265 / 0.78);
+    --glass-blur: 28px;
+  }
+  .palette[open] { display: flex; animation: pop 0.22s var(--ease-out); }
+  .palette::backdrop { background: oklch(0.1 0.02 265 / 0.55); backdrop-filter: blur(4px); }
+  @keyframes pop { from { opacity: 0; transform: translateY(-8px) scale(0.98); } }
+  .bar { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1rem; border-bottom: 1px solid oklch(1 0 0 / 0.08); }
+  .prompt { color: var(--synapse); font-size: 1.05rem; width: 1rem; text-align: center; }
+  .input { flex: 1; min-width: 0; background: none; border: 0; color: var(--ink); font: inherit; font-size: 1.02rem; outline: none; }
+  .input::placeholder { color: var(--ink-faint); }
+  .esc-x { display: none; font-size: 0.9rem; }
+  .esc { font-size: 0.7rem; padding: 0.2rem 0.45rem; border-radius: 6px; border: 1px solid oklch(1 0 0 / 0.15); background: oklch(1 0 0 / 0.05); color: var(--ink-muted); cursor: pointer; }
+  .list { list-style: none; margin: 0; padding: 0.5rem; overflow-y: auto; overscroll-behavior: contain; flex: 1; }
+  .list :global(.group) { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); padding: 0.75rem 0.75rem 0.35rem; }
+  .list :global(.opt) { min-height: 2.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.65rem 0.75rem; border-radius: 0.65rem; cursor: pointer; color: var(--ink-muted); }
+  .list :global(.opt[aria-selected='true']) { background: oklch(1 0 0 / 0.08); color: var(--ink); box-shadow: inset 2px 0 0 var(--spike); }
+  .list :global(.opt .hint) { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+  .list :global(.opt mark) { background: none; color: var(--synapse); }
+  .list :global(.none) { padding: 1.5rem 0.75rem; color: var(--ink-faint); font-family: var(--font-mono); font-size: 0.85rem; }
+  /* min-height: 0 lets these flex children shrink and scroll instead of overflowing the dialog */
+  .list, .term { min-height: 0; -webkit-overflow-scrolling: touch; }
+  .term { flex: 1; overflow-y: auto; padding: 0.75rem 1rem 1rem; font-size: 0.82rem; line-height: 1.7; display: flex; flex-direction: column; }
+  .out { flex: 1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.75rem; }
+  .chip {
+    font: inherit;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid oklch(1 0 0 / 0.14);
+    background: oklch(1 0 0 / 0.05);
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .chip:hover, .chip:active { color: var(--ink); border-color: color-mix(in oklch, var(--synapse) 50%, transparent); }
+  .term[hidden] { display: none; }
+  .out :global(.ln) { white-space: pre-wrap; word-break: break-word; color: var(--ink-muted); }
+  .out :global(.cmd) { color: var(--ink); }
+  .out :global(.cmd::before) { content: '❯ '; color: var(--spike); }
+  .out :global(.ok) { color: var(--synapse); }
+  .out :global(.err) { color: oklch(0.72 0.18 25); }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.5rem 0.75rem; border-top: 1px solid oklch(1 0 0 / 0.08); font-size: 0.68rem; color: var(--ink-faint); }
+  .foot kbd { margin-right: 0.15rem; }
+  .modes { display: inline-flex; padding: 2px; border-radius: 999px; background: oklch(1 0 0 / 0.05); border: 1px solid oklch(1 0 0 / 0.08); }
+  .mode { font: inherit; font-size: 0.72rem; padding: 0.35rem 0.75rem; border: 0; border-radius: 999px; background: none; color: var(--ink-faint); cursor: pointer; }
+  .mode[aria-pressed='true'] { background: oklch(1 0 0 / 0.1); color: var(--ink); }
+
+  /* Touch devices: bigger targets, no keyboard hints */
+  @media (pointer: coarse) {
+    .keys { display: none; }
+    .mode { font-size: 0.8rem; padding: 0.5rem 1rem; }
+    .esc-key { display: none; }
+    .esc-x { display: inline; }
+    .esc { padding: 0.35rem 0.6rem; }
+    .chip { font-size: 0.82rem; padding: 0.55rem 0.85rem; }
+  }
+
+  /* Phones: a sheet sized to the *visible* viewport (shrinks when the keyboard opens).
+     --vvh / --vvt are set from window.visualViewport by palette.ts. */
+  @media (max-width: 640px) {
+    .palette {
+      inset: auto 0.5rem auto 0.5rem;
+      top: calc(var(--vvt, 0px) + 0.5rem);
+      width: auto;
+      margin: 0;
+      height: calc(var(--vvh, 100dvh) - 1rem);
+      max-height: none;
+      border-radius: 1rem;
+    }
+    .list :global(.opt) { padding-block: 0.8rem; }
+    .term { font-size: 0.74rem; padding-inline: 0.85rem; }
+  }
+  :global(html:has(dialog[data-palette][open])) { overflow: hidden; }
+</style>

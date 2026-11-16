@@ -1,0 +1,54 @@
+---
+import { skills } from '@/data/cv';
+---
+
+<section id="skills" class="section" aria-labelledby="skills-title">
+  <div class="container-x">
+    <p class="eyebrow reveal">04 · Toolkit</p>
+    <h2 id="skills-title" class="h-section reveal">Skills</h2>
+    <p class="lede reveal">The tools and methods I use day to day.</p>
+
+    <div class="grid">
+      {
+        skills.map((g) => (
+          <section class={`group glass reveal accent-${g.accent}`} aria-label={g.area}>
+            <h3>
+              <span class="pip" aria-hidden="true" />
+              {g.area}
+            </h3>
+            <ul class="chips" role="list">
+              {g.items.map((i) => (
+                <li class="chip">{i}</li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  }
+  /* an odd card out on the last row spans the full width */
+  .group:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .group { --accent: var(--synapse); padding: 1.25rem 1.35rem 1.4rem; border-radius: var(--radius-md); }
+  .accent-dendrite { --accent: var(--dendrite); }
+  .accent-spike { --accent: var(--spike); }
+  h3 { display: flex; align-items: center; gap: 0.6rem; font-size: var(--step-0); font-weight: 600; }
+  .pip { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .chips { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .chip {
+    font-size: 0.86rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    color: var(--ink);
+    background: oklch(1 0 0 / 0.05);
+    border: 1px solid oklch(1 0 0 / 0.09);
+  }
+</style>

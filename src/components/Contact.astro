@@ -1,0 +1,55 @@
+---
+import { site } from '@/data/site';
+const links = [
+  { label: 'LinkedIn', value: 'Message me', href: site.links.linkedin },
+  { label: 'GitHub', value: `@${site.githubUser}`, href: site.links.github },
+  ...(site.links.orcid ? [{ label: 'ORCID', value: site.links.orcid.split('/').pop() ?? 'Profile', href: site.links.orcid }] : []),
+].filter((l) => l.href);
+---
+
+<section id="contact" class="section" aria-labelledby="contact-title">
+  <div class="container-x">
+    <div class="panel glass glass-refract reveal">
+      <p class="eyebrow">08 · Connect</p>
+      <h2 id="contact-title" class="h-section">Let's build <span class="text-gradient">something that learns.</span></h2>
+      <p class="lede">Open to ML engineering roles, internships and research collaborations, especially in sensing and Earth observation. {site.location}.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={site.links.linkedin} target="_blank" rel="noopener">Connect on LinkedIn ↗</a>
+        <a class="btn glass glass-hover" href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <ul class="links" role="list">
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener">
+                <span class="k mono">{l.label}</span>
+                <span class="v">{l.value} ↗</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<style>
+  .panel { padding: clamp(1.5rem, 5vw, 3.5rem); border-radius: calc(var(--radius-lg) * 1.25); overflow: hidden; }
+  .panel::after {
+    content: '';
+    position: absolute;
+    inset: -30% -10% auto auto;
+    width: 60%;
+    aspect-ratio: 1;
+    background: radial-gradient(closest-side, oklch(0.68 0.2 295 / 0.28), transparent);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  .links { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+  .links a { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border-radius: var(--radius-md); border: 1px solid oklch(1 0 0 / 0.08); transition: border-color 0.2s, background-color 0.2s; }
+  .links a:hover { border-color: color-mix(in oklch, var(--synapse) 45%, transparent); background: oklch(1 0 0 / 0.04); }
+  .k { font-size: 0.68rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.12em; }
+  .v { font-size: 0.95rem; overflow-wrap: anywhere; }
+</style>

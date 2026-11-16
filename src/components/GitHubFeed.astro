@@ -1,0 +1,94 @@
+---
+import { getGitHubFeed } from '@/lib/github';
+import { site } from '@/data/site';
+
+const feed = await getGitHubFeed();
+const now = Date.now();
+const ago = (iso: string) => {
+  const d = Math.max(0, now - new Date(iso).getTime());
+  const day = 86_400_000;
+  if (d < day) return 'today';
+  if (d < 2 * day) return 'yesterday';
+  if (d < 30 * day) return `${Math.floor(d / day)}d ago`;
+  if (d < 365 * day) return `${Math.floor(d / (30 * day))}mo ago`;
+  return `${Math.floor(d / (365 * day))}y ago`;
+};
+const synced = new Date(feed.fetchedAt).getTime() > 0 ? new Date(feed.fetchedAt).toISOString().slice(0, 10) : null;
+---
+
+<section id="github" class="section" aria-labelledby="github-title">
+  <div class="container-x">
+    <div class="head">
+      <div>
+        <p class="eyebrow reveal">06 · Code</p>
+        <h2 id="github-title" class="h-section reveal">On GitHub</h2>
+        <p class="lede reveal">Pinned and recently active repositories, synced from GitHub every night.</p>
+      </div>
+      <a class="btn glass glass-hover reveal" href={site.links.github} target="_blank" rel="noopener">
+        @{feed.user} ↗
+      </a>
+    </div>
+
+    {
+      feed.repos.length > 0 ? (
+        <ul class="repos" role="list">
+          {feed.repos.map((r) => (
+            <li class="reveal">
+              <a class="repo glass glass-hover" href={r.url} target="_blank" rel="noopener">
+                <div class="row">
+                  <span class="name mono">{r.name}</span>
+                  {r.pinned && <span class="pin mono">pinned</span>}
+                </div>
+                <p class="desc">{r.description ?? 'No description yet.'}</p>
+                <div class="meta mono">
+                  {r.language && (
+                    <span class="lang">
+                      <span class="nt" style={`--c:${r.languageColor ?? 'var(--synapse)'}`} aria-hidden="true" />
+                      {r.language}
+                    </span>
+                  )}
+                  <span title="stars">★ {r.stars}</span>
+                  <span class="fired" title={`last push ${r.updatedAt}`}>
+                    last fired {ago(r.updatedAt)}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="empty glass mono reveal">
+          <p>&gt; no public repositories yet — signal pending.</p>
+          <p class="faint">Repositories appear here automatically after the next build.</p>
+        </div>
+      )
+    }
+    {synced && <p class="synced mono">synced {synced} · source: {feed.source}</p>}
+  </div>
+</section>
+
+<style>
+  .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1.5rem; }
+  .repos {
+    list-style: none;
+    padding: 0;
+    margin: 2.5rem 0 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+  .repos li { display: flex; }
+  .repo { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; padding: 1.25rem; border-radius: var(--radius-md); }
+  .row { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; }
+  .name { font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .repo:hover .name { color: var(--synapse); }
+  .pin { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--spike); border: 1px solid color-mix(in oklch, var(--spike) 40%, transparent); border-radius: 999px; padding: 0.1rem 0.45rem; }
+  .desc { color: var(--ink-muted); font-size: 0.92rem; }
+  .meta { margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.72rem; color: var(--ink-faint); }
+  .lang { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--ink-muted); }
+  .nt { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+  .fired { margin-left: auto; }
+  .empty { margin-top: 2.5rem; padding: 1.5rem; border-radius: var(--radius-md); color: var(--synapse); font-size: 0.9rem; display: grid; gap: 0.4rem; }
+  .faint { color: var(--ink-faint); }
+  .synced { margin-top: 1.25rem; font-size: 0.7rem; color: var(--ink-faint); }
+</style>

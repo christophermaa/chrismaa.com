@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import { awards } from '@/data/cv';
+const pubs = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year);
+---
+
+<section id="research" class="section" aria-labelledby="pubs-title">
+  <div class="container-x">
+    <p class="eyebrow reveal">07 · Research</p>
+    <h2 id="pubs-title" class="h-section reveal">Publications &amp; recognition</h2>
+
+    <div class="cols">
+      <div>
+        <h3 class="sub mono">Publications</h3>
+        <ol class="pubs" role="list">
+          {
+            pubs.map((p) => (
+              <li class="pub reveal">
+                <span class="year mono">{p.data.year}</span>
+                <div>
+                  {p.data.title ? (
+                    <>
+                      <p class="title">{p.data.title}</p>
+                      <p class="authors">{p.data.authors}</p>
+                    </>
+                  ) : (
+                    <p class="title">{p.data.authors}</p>
+                  )}
+                  <p class="venue mono">
+                    {p.data.venue}
+                    {p.data.note && ` · ${p.data.note}`}
+                    {p.data.url && (
+                      <>
+                        {' · '}
+                        <a href={p.data.url} target="_blank" rel="noopener">
+                          link ↗
+                        </a>
+                      </>
+                    )}
+                  </p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div>
+        <h3 class="sub mono">Awards &amp; funding</h3>
+        <ul class="awards reveal" role="list">
+          {awards.map((a) => <li>{a}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cols { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
+  @media (min-width: 900px) { .cols { grid-template-columns: 1.6fr 1fr; gap: 3.5rem; } }
+  .sub { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; margin-bottom: 0.5rem; }
+  .pubs { list-style: none; padding: 0; margin: 0; display: grid; }
+  .pub { display: grid; grid-template-columns: 3.25rem 1fr; gap: 1rem; padding-block: 1.1rem; border-top: 1px solid oklch(1 0 0 / 0.07); }
+  .year { color: var(--synapse); font-size: 0.85rem; padding-top: 0.15rem; }
+  .title { font-weight: 600; line-height: 1.45; }
+  .authors { color: var(--ink-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+  .venue { color: var(--ink-faint); font-size: 0.75rem; margin-top: 0.35rem; }
+  .venue a { color: var(--synapse); }
+  .venue a:hover { text-decoration: underline; }
+  .awards { list-style: none; padding: 0; margin: 0; display: grid; }
+  .awards li { padding-block: 0.8rem; border-top: 1px solid oklch(1 0 0 / 0.07); color: var(--ink-muted); font-size: 0.95rem; }
+  .awards li::before { content: '◆'; color: var(--spike); font-size: 0.6rem; margin-right: 0.7rem; vertical-align: 0.15em; }
+</style>

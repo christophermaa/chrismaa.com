@@ -1,0 +1,35 @@
+---
+import { site } from '@/data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer no-print">
+  <div class="container-x row">
+    <p class="mono small">
+      © {year} {site.name} · built with Astro · <a href={site.sourceRepo} class="link">source</a>
+    </p>
+    <p class="mono small faint">
+      <span class="pulse" aria-hidden="true"></span> signal nominal · press <kbd data-mod-key>⌘K</kbd>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer { border-top: 1px solid oklch(1 0 0 / 0.06); padding-block: 2rem 2.5rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; justify-content: space-between; align-items: center; }
+  .small { font-size: 0.8rem; color: var(--ink-muted); }
+  .faint { color: var(--ink-faint); display: inline-flex; align-items: center; gap: 0.5rem; }
+  .link { color: var(--synapse); }
+  .link:hover { text-decoration: underline; }
+  .pulse {
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: var(--synapse);
+    box-shadow: 0 0 0 0 oklch(0.82 0.14 200 / 0.6);
+    animation: pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 oklch(0.82 0.14 200 / 0.55); }
+    70% { box-shadow: 0 0 0 8px oklch(0.82 0.14 200 / 0); }
+    100% { box-shadow: 0 0 0 0 oklch(0.82 0.14 200 / 0); }
+  }
+</style>

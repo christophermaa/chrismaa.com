@@ -1,0 +1,155 @@
+---
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const projects = all.filter((p) => p.data.featured);
+const more = all.filter((p) => !p.data.featured);
+const domainLabel = { neuro: 'neuroscience', ai: 'artificial intelligence', bridge: 'neuro × ai' } as const;
+---
+
+<section id="projects" class="section" aria-labelledby="projects-title">
+  <div class="container-x">
+    <p class="eyebrow reveal">01 · Selected work</p>
+    <h2 id="projects-title" class="h-section reveal">Projects</h2>
+    <p class="lede reveal">What I've built, what my part was, and what made it hard.</p>
+
+    <ul class="bento" role="list">
+      {
+        projects.map((p) => (
+          <li class={`cell size-${p.data.size} reveal`}>
+            <article class={`card glass glass-hover domain-${p.data.domain}`}>
+              <div class="card-top">
+                <span class="domain mono">
+                  <span class="pip" aria-hidden="true" />
+                  {domainLabel[p.data.domain]}
+                </span>
+                {p.data.year && <span class="year mono">{p.data.year}</span>}
+              </div>
+              <h3>
+                <a href={`/projects/${p.id}`} class="stretched">
+                  {p.data.title}
+                </a>
+              </h3>
+              {p.data.role && <p class="role mono">{p.data.role}</p>}
+              <p class="summary">{p.data.summary}</p>
+              <div class="tags">
+                {p.data.tags.map((t) => (
+                  <span class="tag">{t}</span>
+                ))}
+              </div>
+              <div class="card-links">
+                <span class="read mono" aria-hidden="true">
+                  read more →
+                </span>
+                {p.data.repo && (
+                  <a class="repo mono" href={p.data.repo} target="_blank" rel="noopener">
+                    code ↗
+                  </a>
+                )}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      more.length > 0 && (
+        <div class="more reveal">
+          <h3 class="more-title mono">More projects</h3>
+          <ul role="list">
+            {more.map((p) => (
+              <li>
+                <a href={`/projects/${p.id}`}>
+                  <span class="m-name">{p.data.title}</span>
+                  <span class="m-sum">{p.data.summary}</span>
+                  <span class="m-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .bento {
+    list-style: none;
+    padding: 0;
+    margin: 3rem 0 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) {
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .size-lg { grid-column: span 2; }
+  }
+  /* 3-column bento: lg = 2×2, md = 1×2, sm = 1×1. Dense packing fills gaps. */
+  @media (min-width: 1024px) {
+    .bento { grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(13rem, auto); grid-auto-flow: dense; }
+    .size-lg { grid-column: span 2; grid-row: span 2; }
+    .size-md { grid-row: span 2; }
+  }
+  .cell { container-type: inline-size; display: flex; }
+  .card {
+    --accent: var(--synapse);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: clamp(1.25rem, 3cqi, 2rem);
+    overflow: hidden;
+  }
+  .domain-neuro { --accent: var(--synapse); }
+  .domain-ai { --accent: var(--dendrite); }
+  .domain-bridge { --accent: var(--spike); }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: auto -20% -40% auto;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklch, var(--accent) 22%, transparent), transparent);
+    pointer-events: none;
+    z-index: -1;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .card:hover::after { transform: scale(1.25); }
+  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .domain { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
+  .pip { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .year { font-size: 0.72rem; color: var(--ink-faint); }
+  h3 { font-size: var(--step-1); font-weight: 600; }
+  @container (min-width: 36rem) { h3 { font-size: var(--step-2); } .summary { font-size: var(--step-1); } }
+  .stretched::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .stretched:focus-visible { outline: none; }
+  .stretched:focus-visible::after { outline: 2px solid var(--spike); outline-offset: 2px; }
+  .summary { color: var(--ink-muted); }
+  .role { font-size: 0.72rem; color: var(--ink-faint); margin-top: -0.4rem; }
+  .more { margin-top: 2.5rem; }
+  .more-title { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; }
+  .more ul { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+  .more a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1rem;
+    padding: 1rem 0.25rem;
+    border-top: 1px solid oklch(1 0 0 / 0.07);
+  }
+  .more li:last-child a { border-bottom: 1px solid oklch(1 0 0 / 0.07); }
+  .m-name { font-weight: 600; }
+  .m-sum { grid-column: 1; color: var(--ink-muted); font-size: 0.92rem; }
+  .m-arrow { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--ink-faint); transition: translate 0.3s var(--ease-out), color 0.2s; }
+  .more a:hover .m-name { color: var(--synapse); }
+  .more a:hover .m-arrow { color: var(--synapse); translate: 4px 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; }
+  .card-links { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; }
+  .read { color: var(--ink-faint); transition: color 0.2s, translate 0.3s var(--ease-out); }
+  .card:hover .read { color: var(--accent); translate: 4px 0; }
+  .repo { position: relative; z-index: 1; color: var(--ink-muted); padding: 0.25rem 0.5rem; border-radius: 6px; }
+  .repo:hover { color: var(--ink); background: oklch(1 0 0 / 0.07); }
+</style>

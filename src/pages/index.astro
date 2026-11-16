@@ -1,0 +1,27 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import ProjectBento from '@/components/ProjectBento.astro';
+import AxonTimeline from '@/components/AxonTimeline.astro';
+import Skills from '@/components/Skills.astro';
+import Interests from '@/components/Interests.astro';
+import GitHubFeed from '@/components/GitHubFeed.astro';
+import Publications from '@/components/Publications.astro';
+import Contact from '@/components/Contact.astro';
+import EEGDivider from '@/components/EEGDivider.astro';
+---
+
+<Base>
+  <Hero />
+  <ProjectBento />
+  <EEGDivider seed={2} label="ch01 · Fz" />
+  <About />
+  <EEGDivider seed={5} label="ch02 · Cz" />
+  <AxonTimeline />
+  <Skills />
+  <Interests />
+  <GitHubFeed />
+  <Publications />
+  <Contact />
+</Base>

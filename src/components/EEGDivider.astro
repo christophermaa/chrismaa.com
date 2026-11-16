@@ -1,0 +1,59 @@
+---
+/** A single EEG-like trace used between sections. Draws itself in on scroll (CSS only). */
+interface Props {
+  seed?: number;
+  label?: string;
+}
+const { seed = 1, label = 'ch01' } = Astro.props;
+
+let s = seed * 9301 + 49297;
+const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+
+const W = 1200;
+const H = 60;
+const pts: string[] = [];
+const spikes = new Set([Math.floor(rnd() * 60) + 20, Math.floor(rnd() * 60) + 110, Math.floor(rnd() * 40) + 180]);
+for (let i = 0; i <= 240; i++) {
+  const x = (i / 240) * W;
+  let y =
+    Math.sin(i * 0.42 + seed) * 5 +
+    Math.sin(i * 0.13 + seed * 2) * 7 +
+    Math.sin(i * 1.7) * 1.5 +
+    (rnd() - 0.5) * 5;
+  if (spikes.has(i)) y = -26;
+  if (spikes.has(i - 1)) y = 18;
+  pts.push(`${x.toFixed(1)},${(H / 2 + y).toFixed(1)}`);
+}
+---
+
+<div class="eeg container-x" aria-hidden="true">
+  <span class="label mono">{label}</span>
+  <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+    <defs>
+      <linearGradient id={`eeg-g-${seed}`} x1="0" x2="1">
+        <stop offset="0" stop-color="var(--synapse)" stop-opacity="0" />
+        <stop offset="0.2" stop-color="var(--synapse)" stop-opacity="0.7" />
+        <stop offset="0.8" stop-color="var(--dendrite)" stop-opacity="0.7" />
+        <stop offset="1" stop-color="var(--dendrite)" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <polyline points={pts.join(' ')} fill="none" stroke={`url(#eeg-g-${seed})`} stroke-width="1.25" vector-effect="non-scaling-stroke" pathLength="1" />
+  </svg>
+</div>
+
+<style>
+  .eeg { position: relative; display: flex; align-items: center; gap: 1rem; height: 3.75rem; opacity: 0.85; }
+  .label { font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.1em; }
+  svg { flex: 1; min-width: 0; height: 100%; overflow: visible; }
+  polyline { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      polyline {
+        animation: draw linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 45%;
+      }
+    }
+  }
+  @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+</style>

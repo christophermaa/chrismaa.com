@@ -1,0 +1,35 @@
+:root {
+  /* Surfaces — deep "cortex" blue-black */
+  --bg: oklch(0.13 0.02 265);
+  --bg-raised: oklch(0.17 0.025 265);
+
+  /* Ink */
+  --ink: oklch(0.96 0.01 250);
+  --ink-muted: oklch(0.76 0.025 255);
+  --ink-faint: oklch(0.58 0.03 260);
+
+  /* Accents */
+  --synapse: oklch(0.82 0.14 200);   /* cyan — signal */
+  --dendrite: oklch(0.68 0.2 295);   /* violet — structure */
+  --spike: oklch(0.83 0.16 75);      /* amber — action potential / focus */
+
+  /* Glass */
+  --glass-tint: oklch(0.32 0.04 265 / 0.38);
+  --glass-tint-strong: oklch(0.26 0.04 265 / 0.62);
+  --glass-edge: oklch(1 0 0 / 0.14);
+  --glass-edge-hi: oklch(1 0 0 / 0.35);
+  --glass-blur: 18px;
+
+  /* Radius & motion */
+  --radius-lg: 1.5rem;
+  --radius-md: 1rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Fluid type scale (≈1.25 → 1.333) */
+  --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.84rem);
+  --step-0: clamp(0.98rem, 0.95rem + 0.15vw, 1.06rem);
+  --step-1: clamp(1.13rem, 1.06rem + 0.35vw, 1.33rem);
+  --step-2: clamp(1.4rem, 1.25rem + 0.75vw, 1.85rem);
+  --step-3: clamp(1.85rem, 1.5rem + 1.6vw, 2.9rem);
+  --step-4: clamp(2.5rem, 1.8rem + 3.6vw, 5rem);
+}

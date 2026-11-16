@@ -1,0 +1,85 @@
+---
+const pillars = [
+  {
+    k: 'build',
+    title: 'Real-time ML pipelines',
+    body: 'End-to-end streaming systems, from acquisition through causal preprocessing to inference and a command to hardware, designed around latency budgets from day one.',
+  },
+  {
+    k: 'measure',
+    title: 'Benchmark before you believe',
+    body: 'Every deep model is compared with classical baselines on accuracy, latency, stability and compute, so the model that ships is the one that earns its cost.',
+  },
+  {
+    k: 'ship',
+    title: 'AI-first engineering',
+    body: 'I use agentic coding tools such as Claude Code across the stack, from pipelines and analysis to documentation, and review and test what they produce.',
+  },
+];
+---
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <div class="container-x">
+    <p class="eyebrow reveal">02 · How I build</p>
+    <h2 id="about-title" class="h-section reveal">AI for messy, real-world <span class="text-gradient">sensor data.</span></h2>
+    <p class="lede reveal">
+      I'm a doctoral researcher at the University of Helsinki. My day job is turning noisy, high-dimensional
+      signals into decisions a machine can act on in real time. Neuroscience taught me the hard data problems:
+      drift, artefacts and tight latency. Now I build the AI systems that handle them, and I want to bring that
+      to Earth observation and SAR.
+    </p>
+
+    <div class="pillars">
+      {
+        pillars.map((p) => (
+          <article class="pillar glass reveal">
+            <p class="mono k">{p.k}</p>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <a class="next glass glass-hover reveal" href="#interests">
+      <span class="next-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5" /><ellipse cx="12" cy="12" rx="10.5" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.2" transform="rotate(-20 12 12)" /></svg>
+      </span>
+      <span class="next-text">
+        <span class="mono next-k">next orbit</span>
+        <span class="next-t">Earth observation &amp; SAR</span>
+        <span class="next-s">Foundational astrophysics and space coursework (ANU), plus a coherent-imaging background that maps onto radar.</span>
+      </span>
+      <span class="next-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .pillars {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+  .pillar { padding: clamp(1.25rem, 3vw, 1.75rem); display: grid; gap: 0.6rem; align-content: start; }
+  .k { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--synapse); }
+  h3 { font-size: var(--step-1); font-weight: 600; }
+  .pillar p:last-child { color: var(--ink-muted); }
+  .next {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.35rem;
+    border-radius: var(--radius-md);
+  }
+  .next-icon { color: var(--synapse); display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: oklch(0.82 0.14 200 / 0.1); }
+  .next-text { display: grid; gap: 0.15rem; }
+  .next-k { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--spike); }
+  .next-t { font-weight: 600; }
+  .next-s { color: var(--ink-muted); font-size: 0.92rem; }
+  .next-arrow { color: var(--ink-faint); transition: translate 0.3s var(--ease-out), color 0.2s; }
+  .next:hover .next-arrow { color: var(--synapse); translate: 4px 0; }
+</style>

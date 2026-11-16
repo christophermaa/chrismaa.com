@@ -1,0 +1,119 @@
+---
+import { experience } from '@/data/cv';
+const kindLabel = { research: 'research', industry: 'industry', education: 'education', venture: 'venture' } as const;
+---
+
+<section id="experience" class="section" aria-labelledby="exp-title">
+  <div class="container-x">
+    <p class="eyebrow reveal">03 · Trajectory</p>
+    <h2 id="exp-title" class="h-section reveal">Experience</h2>
+    <p class="lede reveal">Research, industry and education, most recent first.</p>
+
+    <ol class="axon" role="list">
+      {
+        experience.map((m) => (
+          <li class={`node kind-${m.kind}`}>
+            <span class="ranvier" aria-hidden="true" />
+            <article class="item glass">
+              <div class="meta mono">
+                {m.period && <span class="period">{m.period}</span>}
+                <span class="kind">{kindLabel[m.kind]}</span>
+              </div>
+              <h3>{m.title}</h3>
+              <p class="org">{m.org}</p>
+              {m.summary && <p class="summary">{m.summary}</p>}
+              {m.highlights && (
+                <ul class="hl">
+                  {m.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .axon {
+    --rail: 1.25rem;
+    list-style: none;
+    margin: 3rem 0 0;
+    padding: 0 0 0 calc(var(--rail) + 1.75rem);
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+  }
+  /* axon core */
+  .axon::before {
+    content: '';
+    position: absolute;
+    left: var(--rail);
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    translate: -50% 0;
+    background: linear-gradient(var(--synapse), var(--dendrite));
+    opacity: 0.55;
+  }
+  /* myelin sheath segments */
+  .axon::after {
+    content: '';
+    position: absolute;
+    left: var(--rail);
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 10px;
+    translate: -50% 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      oklch(1 0 0 / 0.1) 0 46px,
+      transparent 46px 54px
+    );
+    border-radius: 6px;
+    -webkit-mask: linear-gradient(transparent, #000 4%, #000 96%, transparent);
+    mask: linear-gradient(transparent, #000 4%, #000 96%, transparent);
+  }
+  .node { position: relative; }
+  .ranvier {
+    position: absolute;
+    left: calc(-1.75rem);
+    top: 1.6rem;
+    width: 14px;
+    height: 14px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--synapse);
+    z-index: 1;
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+  .kind-education .ranvier { border-color: var(--dendrite); }
+  .kind-venture .ranvier { border-color: var(--spike); }
+  .kind-venture .period { color: var(--spike); }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .ranvier { animation: fire linear both; animation-timeline: view(); animation-range: cover 20% cover 45%; }
+    }
+  }
+  @keyframes fire {
+    0% { background: var(--bg); box-shadow: 0 0 0 4px var(--bg); }
+    60% { background: var(--spike); border-color: var(--spike); box-shadow: 0 0 0 4px var(--bg), 0 0 24px 4px var(--spike); }
+    100% { background: var(--synapse); box-shadow: 0 0 0 4px var(--bg), 0 0 12px var(--synapse); }
+  }
+  .item { padding: clamp(1.1rem, 3vw, 1.6rem); border-radius: var(--radius-md); }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.72rem; color: var(--ink-faint); }
+  .period { color: var(--synapse); }
+  .kind { text-transform: uppercase; letter-spacing: 0.12em; }
+  h3 { font-size: var(--step-1); font-weight: 600; margin-top: 0.5rem; }
+  .org { color: var(--ink-muted); font-size: 0.92rem; margin-top: 0.15rem; }
+  .summary { margin-top: 0.75rem; color: var(--ink-muted); }
+  .hl { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; font-size: 0.92rem; color: var(--ink-muted); }
+  .hl li::before { content: '⟶'; margin-right: 0.5rem; color: var(--spike); font-size: 0.8em; }
+  @media (min-width: 900px) {
+    .axon { max-width: 52rem; }
+  }
+</style>
